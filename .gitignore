@@ -1,2 +1,7 @@
 node_modules
 .DS_STORE
+batch
+knn/model.json
+lstm/model.json
+kmeans/codebook.json
+package-lock.json

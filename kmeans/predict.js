@@ -1,24 +1,19 @@
 
-var fs = require('fs')
 var osc = require('osc')
-var statistics = require('./lib/statistics')
-var LABEL = 0
+var fs = require('fs')
+var DynamicTimeWarping = require('dynamic-time-warping')
+var statistics = require('../lib/statistics')
+var clusters = JSON.parse(fs.readFileSync('./codebook.json').toString())
+
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: 57111,
     metadata: true
 })
 
-function clamp (num) {
-	if (typeof num !== 'number' || isNaN(num)) return 0
-		else if (num < 0) {
-      return 0
-    } else if (num > 1) {
-      return 1
-    } else {
-      return num;
-  }
-}
+var distFunc = function( a, b ) {
+    return Math.abs( a - b );
+};
 
 var onsets = []
 var entropy = []
@@ -43,51 +38,10 @@ var c8 = []
 var c9 = []
 var c10 = []
 var c11 = []
-// var c12 = []
-// var c13 = []
-// var c14 = []
-// var c15 = []
-// var c16 = []
-// var c17 = []
-// var c18 = []
-// var c19 = []
-// var c20 = []
-// var c21 = []
-// var c22 = []
-// var c23 = []
-// var c24 = []
-// var c25 = []
-// var c26 = []
-// var c27 = []
-// var c28 = []
 
 var batch = []
 
 setInterval(function () {
-  // console.log('onsets ', statistics(onsets).skew)
-  // console.log('entropy ', statistics(entropy).skew)
-  // console.log('centroid ', statistics(centroid).skew)
-  // console.log('percentile ', statistics(percentile).skew)
-  // console.log('crest ', statistics(crest).skew)
-  // console.log('flatness ', statistics(flatness).skew)
-  // console.log('slope ', statistics(slope).skew)
-  // console.log('pitch ', statistics(pitch).skew)
-  // console.log('peak ', statistics(peak).skew)
-  // console.log('dissonance ', statistics(dissonance).skew)
-  // console.log('flux ', statistics(flux).skew)
-  // console.log('fluxpos ', statistics(fluxpos).skew)
-  // console.log('c1 ', statistics(c1).skew)
-  // console.log('c2 ', statistics(c2).skew)
-  // console.log('c3 ', statistics(c3).skew)
-  // console.log('c4 ', statistics(c4).skew)
-  // console.log('c5 ', statistics(c5).skew)
-  // console.log('c6 ', statistics(c6).skew)
-  // console.log('c7 ', statistics(c7).skew)
-  // console.log('c8 ', statistics(c8).skew)
-  // console.log('c9 ', statistics(c9).skew)
-  // console.log('c10 ', statistics(c10).skew)
-  // console.log('c11 ', statistics(c11))
-
   if (batch.length < 48) {
     batch.push(statistics(onsets).median / statistics(onsets).maximum)
     batch.push(statistics(entropy).median / statistics(entropy).maximum)
@@ -113,29 +67,11 @@ setInterval(function () {
     batch.push(statistics(c10).median / statistics(c10).maximum)
     batch.push(statistics(c11).median / statistics(c11).maximum)
   } else {
-    console.log('batch', batch)
-    batch = batch.map(function (i) { return clamp(i); })
-    fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
+    // console.log('batch', batch)
+    var output = predict(batch)
+    console.log(output)
     batch = []
   }
-
-  // console.log('c12 ', statistics(c12).skew)
-  // console.log('c13 ', statistics(c13).skew)
-  // console.log('c14 ', statistics(c14).skew)
-  // console.log('c15 ', statistics(c15).skew)
-  // console.log('c16 ', statistics(c16).skew)
-  // console.log('c17 ', statistics(c17).skew)
-  // console.log('c18 ', statistics(c18).skew)
-  // console.log('c19 ', statistics(c19).skew)
-  // console.log('c20 ', statistics(c20).skew)
-  // console.log('c21 ', statistics(c21).skew)
-  // console.log('c22 ', statistics(c22).skew)
-  // console.log('c23 ', statistics(c23).skew)
-  // console.log('c24 ', statistics(c24).skew)
-  // console.log('c25 ', statistics(c25).skew)
-  // console.log('c26 ', statistics(c26).skew)
-  // console.log('c27 ', statistics(c27).skew)
-  // console.log('c28 ', statistics(c28).skew)
 
   onsets = []
   entropy = []
@@ -207,22 +143,25 @@ udpPort.on("message", function (oscMsg) {
   c9.push(msg[20])
   c10.push(msg[21])
   c11.push(msg[22])
-  // c12.push(msg[23])
-  // c13.push(msg[24])
-  // c14.push(msg[25])
-  // c15.push(msg[26])
-  // c16.push(msg[27])
-  // c17.push(msg[28])
-  // c18.push(msg[29])
-  // c19.push(msg[30])
-  // c20.push(msg[31])
-  // c21.push(msg[32])
-  // c22.push(msg[33])
-  // c23.push(msg[34])
-  // c24.push(msg[35])
-  // c25.push(msg[36])
-  // c26.push(msg[37])
-  // c27.push(msg[38])
-  // c28.push(msg[39])
 })
 udpPort.open()
+
+function predict (prediction, debug = true) {
+  var result = []
+  clusters.forEach(function (c, index) {
+    if (!c || !Array.isArray(c) || !prediction) return
+    var dtw = new DynamicTimeWarping (c, prediction, distFunc)
+    var d = dtw.getDistance()
+    if (typeof d !== 'number') return
+    result.push({ distance: d, index: index })
+  })
+  var THRESHOLD = 7;
+  var match = result.sort(function (a, b) { return b.distance - a.distance }).reverse()[0]
+  if (!match) return 0
+  if (debug) console.log('distance ', match.distance)
+  if (match && match.distance < THRESHOLD) {
+    return 1
+  } else {
+    return 0
+  }
+}

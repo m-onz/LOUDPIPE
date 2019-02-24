@@ -1,24 +1,16 @@
 
-var fs = require('fs')
+
 var osc = require('osc')
-var statistics = require('./lib/statistics')
-var LABEL = 0
+var fs = require('fs')
+var neataptic = require('neataptic')
+var network = new neataptic.Network.fromJSON(JSON.parse(fs.readFileSync('./model.json').toString()))
+var statistics = require('../lib/statistics')
+var LABEL = 1
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: 57111,
     metadata: true
 })
-
-function clamp (num) {
-	if (typeof num !== 'number' || isNaN(num)) return 0
-		else if (num < 0) {
-      return 0
-    } else if (num > 1) {
-      return 1
-    } else {
-      return num;
-  }
-}
 
 var onsets = []
 var entropy = []
@@ -89,33 +81,40 @@ setInterval(function () {
   // console.log('c11 ', statistics(c11))
 
   if (batch.length < 48) {
-    batch.push(statistics(onsets).median / statistics(onsets).maximum)
-    batch.push(statistics(entropy).median / statistics(entropy).maximum)
-    batch.push(statistics(centroid).median / statistics(centroid).maximum)
-    batch.push(statistics(percentile).median / statistics(percentile).maximum)
-    batch.push(statistics(crest).median / statistics(crest).maximum)
-    batch.push(statistics(flatness).median / statistics(flatness).maximum)
-    batch.push(statistics(slope).median / statistics(slope).maximum)
-    batch.push(statistics(pitch).median / statistics(pitch).maximum)
-    batch.push(statistics(peak).median / statistics(peak).maximum)
-    batch.push(statistics(dissonance).median / statistics(dissonance).maximum)
-    batch.push(statistics(flux).median / statistics(flux).maximum)
-    batch.push(statistics(fluxpos).median / statistics(fluxpos).maximum)
-    batch.push(statistics(c1).median / statistics(c1).maximum)
-    batch.push(statistics(c2).median / statistics(c2).maximum)
-    batch.push(statistics(c3).median / statistics(c3).maximum)
-    batch.push(statistics(c4).median / statistics(c4).maximum)
-    batch.push(statistics(c5).median / statistics(c5).maximum)
-    batch.push(statistics(c6).median / statistics(c6).maximum)
-    batch.push(statistics(c7).median / statistics(c7).maximum)
-    batch.push(statistics(c8).median / statistics(c8).maximum)
-    batch.push(statistics(c9).median/ statistics(c9).maximum)
-    batch.push(statistics(c10).median / statistics(c10).maximum)
-    batch.push(statistics(c11).median / statistics(c11).maximum)
+    batch.push(statistics(onsets).median / statistics(onsets).maximum || 0)
+    batch.push(statistics(entropy).median / statistics(entropy).maximum || 0)
+    batch.push(statistics(centroid).median / statistics(centroid).maximum || 0)
+    batch.push(statistics(percentile).median / statistics(percentile).maximum || 0)
+    batch.push(statistics(crest).median / statistics(crest).maximum || 0)
+    batch.push(statistics(flatness).median / statistics(flatness).maximum || 0)
+    batch.push(statistics(slope).median / statistics(slope).maximum || 0)
+    batch.push(statistics(pitch).median / statistics(pitch).maximum || 0)
+    batch.push(statistics(peak).median / statistics(peak).maximum || 0)
+    batch.push(statistics(dissonance).median / statistics(dissonance).maximum || 0)
+    batch.push(statistics(flux).median / statistics(flux).maximum || 0)
+    batch.push(statistics(fluxpos).median / statistics(fluxpos).maximum || 0)
+    batch.push(statistics(c1).median / statistics(c1).maximum || 0)
+    batch.push(statistics(c2).median / statistics(c2).maximum || 0)
+    batch.push(statistics(c3).median / statistics(c3).maximum || 0)
+    batch.push(statistics(c4).median / statistics(c4).maximum || 0)
+    batch.push(statistics(c5).median / statistics(c5).maximum || 0)
+    batch.push(statistics(c6).median / statistics(c6).maximum || 0)
+    batch.push(statistics(c7).median / statistics(c7).maximum || 0)
+    batch.push(statistics(c8).median / statistics(c8).maximum || 0)
+    batch.push(statistics(c9).median/ statistics(c9).maximum || 0)
+    batch.push(statistics(c10).median / statistics(c10).maximum || 0)
+    batch.push(statistics(c11).median / statistics(c11).maximum || 0)
   } else {
-    console.log('batch', batch)
-    batch = batch.map(function (i) { return clamp(i); })
-    fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
+    var hasNAN = false
+    batch.forEach(function (x) {
+      if (isNaN(x)) hasNAN = true
+    })
+    if (hasNAN) return;
+    var output = network.activate(batch)
+    console.log(output)
+    // var x = Math.round(parseFloat(output))
+    // if (isNaN(x)) return console.log('>1 ', 0)
+    //   else console.log('>2 ', x)
     batch = []
   }
 

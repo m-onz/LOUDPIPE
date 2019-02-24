@@ -1,24 +1,16 @@
 
-var fs = require('fs')
 var osc = require('osc')
-var statistics = require('./lib/statistics')
-var LABEL = 0
+var fs = require('fs')
+var KNN = require('ml-knn')
+var model = JSON.parse(fs.readFileSync('./model.json').toString())
+var knn = KNN.load(model)
+var statistics = require('../lib/statistics')
+var LABEL = 1
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: 57111,
     metadata: true
 })
-
-function clamp (num) {
-	if (typeof num !== 'number' || isNaN(num)) return 0
-		else if (num < 0) {
-      return 0
-    } else if (num > 1) {
-      return 1
-    } else {
-      return num;
-  }
-}
 
 var onsets = []
 var entropy = []
@@ -113,9 +105,9 @@ setInterval(function () {
     batch.push(statistics(c10).median / statistics(c10).maximum)
     batch.push(statistics(c11).median / statistics(c11).maximum)
   } else {
-    console.log('batch', batch)
-    batch = batch.map(function (i) { return clamp(i); })
-    fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
+    // console.log('batch', batch)
+    var ans = parseInt(knn.predict([batch]))
+    console.log(ans)
     batch = []
   }
 
