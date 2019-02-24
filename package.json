@@ -1,0 +1,25 @@
+{
+  "name": "loudpipe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-onz/LOUDPIPE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/m-onz/LOUDPIPE/issues"
+  },
+  "homepage": "https://github.com/m-onz/LOUDPIPE#readme",
+  "dependencies": {
+    "dynamic-time-warping": "^1.0.0",
+    "ml-knn": "^2.1.3",
+    "neataptic": "^1.4.7",
+    "osc": "^2.2.4"
+  }
+}
