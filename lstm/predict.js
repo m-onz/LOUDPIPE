@@ -55,6 +55,18 @@ var c11 = []
 
 var batch = []
 
+
+function clamp (num) {
+	if (typeof num !== 'number' || isNaN(num)) return 0
+		else if (num < 0) {
+      return 0
+    } else if (num > 1) {
+      return 1
+    } else {
+      return Math.abs(num);
+  }
+}
+
 setInterval(function () {
   // console.log('onsets ', statistics(onsets).skew)
   // console.log('entropy ', statistics(entropy).skew)
@@ -80,30 +92,27 @@ setInterval(function () {
   // console.log('c10 ', statistics(c10).skew)
   // console.log('c11 ', statistics(c11))
 
-  if (batch.length < 48) {
-    batch.push(statistics(onsets).median / statistics(onsets).maximum || 0)
-    batch.push(statistics(entropy).median / statistics(entropy).maximum || 0)
-    batch.push(statistics(centroid).median / statistics(centroid).maximum || 0)
-    batch.push(statistics(percentile).median / statistics(percentile).maximum || 0)
-    batch.push(statistics(crest).median / statistics(crest).maximum || 0)
-    batch.push(statistics(flatness).median / statistics(flatness).maximum || 0)
-    batch.push(statistics(slope).median / statistics(slope).maximum || 0)
-    batch.push(statistics(pitch).median / statistics(pitch).maximum || 0)
-    batch.push(statistics(peak).median / statistics(peak).maximum || 0)
-    batch.push(statistics(dissonance).median / statistics(dissonance).maximum || 0)
-    batch.push(statistics(flux).median / statistics(flux).maximum || 0)
-    batch.push(statistics(fluxpos).median / statistics(fluxpos).maximum || 0)
-    batch.push(statistics(c1).median / statistics(c1).maximum || 0)
-    batch.push(statistics(c2).median / statistics(c2).maximum || 0)
-    batch.push(statistics(c3).median / statistics(c3).maximum || 0)
-    batch.push(statistics(c4).median / statistics(c4).maximum || 0)
-    batch.push(statistics(c5).median / statistics(c5).maximum || 0)
-    batch.push(statistics(c6).median / statistics(c6).maximum || 0)
-    batch.push(statistics(c7).median / statistics(c7).maximum || 0)
-    batch.push(statistics(c8).median / statistics(c8).maximum || 0)
-    batch.push(statistics(c9).median/ statistics(c9).maximum || 0)
-    batch.push(statistics(c10).median / statistics(c10).maximum || 0)
-    batch.push(statistics(c11).median / statistics(c11).maximum || 0)
+  if (batch.length < 20) {
+    batch.push(clamp(statistics(entropy).median / statistics(entropy).maximum))
+    batch.push(clamp(statistics(centroid).median / statistics(centroid).maximum))
+    batch.push(clamp(statistics(percentile).median / statistics(percentile).maximum))
+    batch.push(clamp(statistics(crest).median / statistics(crest).maximum))
+    batch.push(clamp(statistics(flatness).median / statistics(flatness).maximum))
+    batch.push(clamp(statistics(slope).median / statistics(slope).maximum))
+    batch.push(clamp(statistics(pitch).median / statistics(pitch).maximum))
+    batch.push(clamp(statistics(peak).median / statistics(peak).maximum))
+    batch.push(clamp(statistics(dissonance).median / statistics(dissonance).maximum))
+    batch.push(clamp(statistics(c1).median / statistics(c1).maximum))
+    batch.push(clamp(statistics(c2).median / statistics(c2).maximum))
+    batch.push(clamp(statistics(c3).median / statistics(c3).maximum))
+    batch.push(clamp(statistics(c4).median / statistics(c4).maximum))
+    batch.push(clamp(statistics(c5).median / statistics(c5).maximum))
+    batch.push(clamp(statistics(c6).median / statistics(c6).maximum))
+    batch.push(clamp(statistics(c7).median / statistics(c7).maximum))
+    batch.push(clamp(statistics(c8).median / statistics(c8).maximum))
+    batch.push(clamp(statistics(c9).median/ statistics(c9).maximum))
+    batch.push(clamp(statistics(c10).median / statistics(c10).maximum))
+    batch.push(clamp(statistics(c11).median / statistics(c11).maximum))
   } else {
     var hasNAN = false
     batch.forEach(function (x) {
