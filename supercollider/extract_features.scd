@@ -4,8 +4,8 @@
 s.boot;
 
 (
-//d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative/14.wav");
-d = Buffer.read(s, "/home/xt53/Desktop/audiodata/positivebatch/POSITIVE.wav");
+d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative.wav");
+//d = Buffer.read(s, "/home/xt53/Desktop/audiodata/positive/15.wav");
   {
 /*	var sound = SinOsc.ar(240,mul:0.2)
 	+ Resonz.ar(ClipNoise.ar,2000,0.6,mul:SinOsc.kr(0.05).range(0,0.5))

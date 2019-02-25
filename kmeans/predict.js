@@ -163,7 +163,7 @@ function predict (prediction, debug = true) {
     if (typeof d !== 'number') return
     result.push({ distance: d, index: index })
   })
-  var THRESHOLD = 7;
+  var THRESHOLD = 1.33;
   var match = result.sort(function (a, b) { return b.distance - a.distance }).reverse()[0]
   if (!match) return 0
   if (debug) console.log('distance ', match.distance)
