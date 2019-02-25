@@ -18,16 +18,16 @@ dir.forEach(function (i, index) {
   dataset.push(x)
 })
 
-var clusters = kmeans.run(dataset, 11);
+var clusters = kmeans.run(dataset, 48);
 
 var result = []
 
 clusters.forEach(function (cluster, index) {
   if (!Array.isArray(cluster) && cluster.length < 3) return cluster[index] = [];
   var center = dataset[cluster[Math.round(cluster.length/2)]]
-  result.push(dataset[cluster[0]])
+  // result.push(dataset[cluster[0]])
   result.push(center)
-  result.push(dataset[cluster[cluster.length-1]])
+  // result.push(dataset[cluster[cluster.length-1]])
 })
 
 console.log(result)

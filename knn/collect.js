@@ -4,7 +4,7 @@
 var fs = require('fs')
 var osc = require('osc')
 var statistics = require('../lib/statistics')
-var LABEL = 0
+var LABEL = 1
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: 57111,
@@ -14,7 +14,6 @@ var udpPort = new osc.UDPPort({
 function convertRange( value, r1, r2 ) {
     return ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
 }
-
 
 function clamp (num) {
 	if (typeof num !== 'number' || isNaN(num)) return 0
