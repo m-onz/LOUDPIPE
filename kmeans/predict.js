@@ -14,7 +14,7 @@ var udpPort = new osc.UDPPort({
 var distFunc = function( a, b ) {
     return Math.abs( a - b );
 };
-
+/*
 var onsets = []
 var entropy = []
 var centroid = []
@@ -53,7 +53,7 @@ function clamp (num) {
 }
 
 setInterval(function () {
-  if (batch.length < 20) {
+  if (batch.length < 82) {
     batch.push(clamp(statistics(entropy).median / statistics(entropy).maximum))
     batch.push(clamp(statistics(centroid).median / statistics(centroid).maximum))
     batch.push(clamp(statistics(percentile).median / statistics(percentile).maximum))
@@ -119,7 +119,19 @@ setInterval(function () {
   // c26 = []
   // c27 = []
   // c28 = []
-}, 500)
+}, 500)*/
+
+var batch = []
+function clamp (num) {
+	if (typeof num !== 'number' || isNaN(num)) return 0
+		else if (num < 0) {
+      return 0
+    } else if (num > 1) {
+      return 1
+    } else {
+      return Math.abs(num);
+  }
+}
 
 udpPort.on("message", function (oscMsg) {
   var msg = oscMsg.args[0].value
@@ -128,29 +140,40 @@ udpPort.on("message", function (oscMsg) {
 	.map(function (i) { return parseFloat(i); })
 	if (!msg.length || !Array.isArray(msg)) return;
 
-  onsets.push(msg[0])
-  entropy.push(msg[1])
-  centroid.push(msg[2])
-  percentile.push(msg[3])
-  crest.push(msg[4])
-  flatness.push(msg[5])
-  slope.push(msg[6])
-  pitch.push(msg[7])
-  peak.push(msg[8])
-  dissonance.push(msg[9])
-  flux.push(msg[10])
-  fluxpos.push(msg[11])
-  c1.push(msg[12])
-  c2.push(msg[13])
-  c3.push(msg[14])
-  c4.push(msg[15])
-  c5.push(msg[16])
-  c6.push(msg[17])
-  c7.push(msg[18])
-  c8.push(msg[19])
-  c9.push(msg[20])
-  c10.push(msg[21])
-  c11.push(msg[22])
+  // onsets.push(msg[0])
+  // entropy.push(msg[1])
+  // centroid.push(msg[2])
+  // percentile.push(msg[3])
+  // crest.push(msg[4])
+  // flatness.push(msg[5])
+  // slope.push(msg[6])
+  // pitch.push(msg[7])
+  // peak.push(msg[8])
+  // dissonance.push(msg[9])
+  // flux.push(msg[10])
+  // fluxpos.push(msg[11])
+  // c1.push(msg[12])
+  // c2.push(msg[13])
+  // c3.push(msg[14])
+  // c4.push(msg[15])
+  // c5.push(msg[16])
+  // c6.push(msg[17])
+  // c7.push(msg[18])
+  // c8.push(msg[19])
+  // c9.push(msg[20])
+  // c10.push(msg[21])
+  // c11.push(msg[22])
+
+
+  msg.forEach(function (i) {
+  if (batch.length < 82) batch.push(clamp(i))
+  	else {
+	    // fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
+      var ans = predict(batch)
+      console.log(ans)
+  	  batch = []
+  	}
+  })
 })
 udpPort.open()
 
@@ -163,7 +186,7 @@ function predict (prediction, debug = true) {
     if (typeof d !== 'number') return
     result.push({ distance: d, index: index })
   })
-  var THRESHOLD = 1.33;
+  var THRESHOLD = 3;
   var match = result.sort(function (a, b) { return b.distance - a.distance }).reverse()[0]
   if (!match) return 0
   if (debug) console.log('distance ', match.distance)

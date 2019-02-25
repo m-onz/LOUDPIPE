@@ -2,7 +2,7 @@
 var fs = require('fs')
 var neataptic = require('neataptic')
 
-var network = new neataptic.architect.LSTM(20, 20, 20, 1)
+var network = new neataptic.architect.LSTM(82, 82, 82, 1)
 
 var dataset = []
 var dir = fs.readdirSync('../batch')

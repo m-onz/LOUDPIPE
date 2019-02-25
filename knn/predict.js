@@ -70,7 +70,7 @@ function clamp (num) {
   }
 }
 
-
+/*
 setInterval(function () {
   // console.log('onsets ', statistics(onsets).skew)
   // console.log('entropy ', statistics(entropy).skew)
@@ -96,9 +96,9 @@ setInterval(function () {
   // console.log('c10 ', statistics(c10).skew)
   // console.log('c11 ', statistics(c11))
   // console.log(statistics(onsets))
-  if (batch.length < 20) {
-    batch.push(clamp(statistics(entropy).median / statistics(entropy).maximum))
-    batch.push(clamp(statistics(centroid).median / statistics(centroid).maximum))
+  if (batch.length < 40) {
+    batch.push(clamp(statistics(entropy).median /  statistics(entropy).maximum))
+    batch.push(clamp(statistics(centroid).median /  statistics(centroid).maximum))
     batch.push(clamp(statistics(percentile).median / statistics(percentile).maximum))
     batch.push(clamp(statistics(crest).median / statistics(crest).maximum))
     batch.push(clamp(statistics(flatness).median / statistics(flatness).maximum))
@@ -106,8 +106,6 @@ setInterval(function () {
     batch.push(clamp(statistics(pitch).median / statistics(pitch).maximum))
     batch.push(clamp(statistics(peak).median / statistics(peak).maximum))
     batch.push(clamp(statistics(dissonance).median / statistics(dissonance).maximum))
-    // batch.push(clamp(statistics(flux).median / statistics(flux).maximum))
-    // batch.push(clamp(statistics(fluxpos).median / statistics(fluxpos).maximum))
     batch.push(clamp(statistics(c1).median / statistics(c1).maximum))
     batch.push(clamp(statistics(c2).median / statistics(c2).maximum))
     batch.push(clamp(statistics(c3).median / statistics(c3).maximum))
@@ -124,6 +122,27 @@ setInterval(function () {
     var ans = parseInt(knn.predict([batch]))
     console.log(ans)
     batch = []
+    onsets = []
+    entropy = []
+    centroid = []
+    percentile = []
+    crest = []
+    flatness = []
+    slope = []
+    pitch = peak = []
+    dissonance = []
+    flux = []
+    fluxpos = []
+    c1 = []
+    c2 = []
+    c3 = []
+    c5 = []
+    c6 = []
+    c7 = []
+    c8 = []
+    c9 = []
+    c10 = []
+    c11 = []
   }
 
   // console.log('c12 ', statistics(c12).skew)
@@ -144,27 +163,7 @@ setInterval(function () {
   // console.log('c27 ', statistics(c27).skew)
   // console.log('c28 ', statistics(c28).skew)
 
-  onsets = []
-  entropy = []
-  centroid = []
-  percentile = []
-  crest = []
-  flatness = []
-  slope = []
-  pitch = peak = []
-  dissonance = []
-  flux = []
-  fluxpos = []
-  c1 = []
-  c2 = []
-  c3 = []
-  c5 = []
-  c6 = []
-  c7 = []
-  c8 = []
-  c9 = []
-  c10 = []
-  c11 = []
+
   // c12 = []
   // c13 = []
   // c14 = []
@@ -183,6 +182,7 @@ setInterval(function () {
   // c27 = []
   // c28 = []
 }, 500)
+*/
 
 udpPort.on("message", function (oscMsg) {
   var msg = oscMsg.args[0].value
@@ -191,29 +191,39 @@ udpPort.on("message", function (oscMsg) {
 	.map(function (i) { return parseFloat(i); })
 	if (!msg.length || !Array.isArray(msg)) return;
 
-  onsets.push(msg[0])
-  entropy.push(msg[1])
-  centroid.push(msg[2])
-  percentile.push(msg[3])
-  crest.push(msg[4])
-  flatness.push(msg[5])
-  slope.push(msg[6])
-  pitch.push(msg[7])
-  peak.push(msg[8])
-  dissonance.push(msg[9])
-  flux.push(msg[10])
-  fluxpos.push(msg[11])
-  c1.push(msg[12])
-  c2.push(msg[13])
-  c3.push(msg[14])
-  c4.push(msg[15])
-  c5.push(msg[16])
-  c6.push(msg[17])
-  c7.push(msg[18])
-  c8.push(msg[19])
-  c9.push(msg[20])
-  c10.push(msg[21])
-  c11.push(msg[22])
+  msg.forEach(function (i) {
+  if (batch.length < 82) batch.push(clamp(i))
+  	else {
+	    // fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
+      var ans = parseInt(knn.predict([batch]))
+      console.log(ans)
+  	  batch = []
+  	}
+  })
+
+  // onsets.push(msg[0])
+  // entropy.push(msg[1])
+  // centroid.push(msg[2])
+  // percentile.push(msg[3])
+  // crest.push(msg[4])
+  // flatness.push(msg[5])
+  // slope.push(msg[6])
+  // pitch.push(msg[7])
+  // peak.push(msg[8])
+  // dissonance.push(msg[9])
+  // flux.push(msg[10])
+  // fluxpos.push(msg[11])
+  // c1.push(msg[12])
+  // c2.push(msg[13])
+  // c3.push(msg[14])
+  // c4.push(msg[15])
+  // c5.push(msg[16])
+  // c6.push(msg[17])
+  // c7.push(msg[18])
+  // c8.push(msg[19])
+  // c9.push(msg[20])
+  // c10.push(msg[21])
+  // c11.push(msg[22])
   // c12.push(msg[23])
   // c13.push(msg[24])
   // c14.push(msg[25])

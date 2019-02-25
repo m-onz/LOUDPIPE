@@ -4,8 +4,8 @@
 s.boot;
 
 (
-d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative.wav");
-//d = Buffer.read(s, "/home/xt53/Desktop/audiodata/positive/15.wav");
+//d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative.wav");
+d = Buffer.read(s, "/home/xt53/Desktop/audiodata/positivebatch/POSITIVE.wav");
   {
 /*	var sound = SinOsc.ar(240,mul:0.2)
 	+ Resonz.ar(ClipNoise.ar,2000,0.6,mul:SinOsc.kr(0.05).range(0,0.5))
@@ -30,7 +30,7 @@ d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative.wav");
     var mode = KeyMode.kr(fft, 2.0, 0.5);
     var key = KeyClarity.kr(fft, keydecay: 2, chromaleak: 0.5);
 	  SendReply.kr(fft,'extract_features',
-		[slopeanalysis[4]] ++
+		/*[slopeanalysis[4]] ++
 		[entropy] ++
 		spec ++
 		percentile ++
@@ -44,8 +44,9 @@ d = Buffer.read(s, "/home/xt53/Desktop/audiodata/negative.wav");
 		fluxpos ++
 		[mode] ++
 		[key] ++
-		chromagram
-		//mfcc
+		chromagram*/
+		//chromagram
+		mfcc
 	);
 	Out.ar(0, sound!2);
   }.play;
