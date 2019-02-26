@@ -140,7 +140,7 @@ udpPort.on("message", function (oscMsg) {
 	if (!msg.length || !Array.isArray(msg)) return;
   console.log(msg.length)
   msg.forEach(function (i) {
-  if (batch.length < 82) batch.push(clamp(i))
+  if (batch.length < 70) batch.push(clamp(i))
   	else {
       // return console.log(batch)
 	    fs.writeFileSync('../batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))

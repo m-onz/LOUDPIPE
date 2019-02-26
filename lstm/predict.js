@@ -5,9 +5,6 @@ var neataptic = require('neataptic')
 var network = new neataptic.Network.fromJSON(JSON.parse(fs.readFileSync('./model.json').toString()))
 var osc = require('osc')
 var fs = require('fs')
-var DynamicTimeWarping = require('dynamic-time-warping')
-var statistics = require('../lib/statistics')
-var clusters = JSON.parse(fs.readFileSync('../kmeans/codebook.json').toString())
 
 var udpPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
@@ -38,10 +35,9 @@ udpPort.on("message", function (oscMsg) {
 	.map(function (i) { return parseFloat(i); })
 	if (!msg.length || !Array.isArray(msg)) return;
   msg.forEach(function (i) {
-  if (batch.length < 82) batch.push(clamp(i))
+  if (batch.length < 46) batch.push(clamp(i))
   	else {
-	    // fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
-      var ans = network.activate(feature(batch))
+      var ans = network.activate(batch)
       console.log(ans)
   	  batch = []
   	}
@@ -49,17 +45,3 @@ udpPort.on("message", function (oscMsg) {
 })
 
 udpPort.open()
-
-var SCALE_FACTOR = 20
-
-function feature (prediction, debug = true) {
-  var result = []
-  clusters.forEach(function (c, index) {
-    if (!c || !Array.isArray(c) || !prediction) return
-    var dtw = new DynamicTimeWarping (c, prediction, distFunc)
-    var d = dtw.getDistance()
-    if (typeof d !== 'number') return
-    result.push(clamp(d / SCALE_FACTOR))
-  })
-  return result
-}

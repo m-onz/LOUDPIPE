@@ -18,7 +18,7 @@ dir.forEach(function (i, index) {
   dataset.push(x)
 })
 
-var clusters = kmeans.run(dataset, 48);
+var clusters = kmeans.run(dataset, 24);
 
 var result = []
 

@@ -34,7 +34,7 @@ udpPort.on("message", function (oscMsg) {
 	.map(function (i) { return parseFloat(i); })
 	if (!msg.length || !Array.isArray(msg)) return;
   msg.forEach(function (i) {
-  if (batch.length < 82) batch.push(clamp(i))
+  if (batch.length < 46) batch.push(clamp(i))
   	else {
 	    // fs.writeFileSync('./batch/'+LABEL+'-'+Date.now()+'.json', JSON.stringify(batch))
       var ans = predict(batch)
@@ -54,7 +54,7 @@ function predict (prediction, debug = true) {
     if (typeof d !== 'number') return
     result.push({ distance: d, index: index })
   })
-  var THRESHOLD = 2.9;
+  var THRESHOLD = 2;
   var match = result.sort(function (a, b) { return b.distance - a.distance }).reverse()[0]
   if (!match) return 0
   if (debug) console.log('distance ', match.distance)
